@@ -13,10 +13,11 @@ import { useState } from "react";
 const UserHeader = ({ user }) => {
   const toast = useToast();
   const currentUser = useRecoilValue(userAtom);
+  console.log(currentUser);
   const [following, setFollowing] = useState(user.followers.includes(currentUser.user_id));
   const showToast = useShowToast();
   const [updating, setUpdating] = useState(false);
-  console.log(currentUser);
+
 
   const copyURL = () => {
     const currentURL = window.location.href;
@@ -32,6 +33,9 @@ const UserHeader = ({ user }) => {
   };
 
   const handleFollow = async() => {
+
+    //console.log("tran anh duc");
+
     if (!currentUser) {
       showToast("Error", "please loggin to follow", "error");
         return;
@@ -40,6 +44,8 @@ const UserHeader = ({ user }) => {
       return;
     }
     setUpdating(true);
+
+
 
     try {
       const res = await fetch(`http://localhost:1000/user/${username}/follow`, {
@@ -50,18 +56,18 @@ const UserHeader = ({ user }) => {
       })
 
       const data = await res.json();
-      if (data.error) {
-        showToast("Error", error, "error");
-        return;
-      }
+      // if (data.error) {
+      //   showToast("Error", error, "error");
+      //   return;
+      // }
 
-      if (following) {
-        showToast("Success", `Unfollowed ${user.full_name}`, "success" );
-        user.followers.pop();
-      } else {
-        showToast("Success", `followed ${user.full_name}`, "success" );
-        user.followers.push(currentUser.user_id)
-      }
+      // if (following) {
+      //   showToast("Success", `Unfollowed ${user.full_name}`, "success" );
+      //   user.followers.pop();
+      // } else {
+      //   showToast("Success", `followed ${user.full_name}`, "success" );
+      //   user.followers.push(currentUser.user_id)
+      // }
       setFollowing(!following); // change text in follow button
 
     } catch (error) {
@@ -105,13 +111,11 @@ const UserHeader = ({ user }) => {
       <Text>{user?.bio}</Text>
       {currentUser.user_id === user?.user_id && (
         <Link as={RouterLink} to={"/update"}>
-          <Button size={"sm"}> Update Profile </Button>
-        </Link>
+        <Button size={"sm"}> Update Profile </Button>
+      </Link>
       )}
       {currentUser.user_id !== user?.user_id && (
-        <Button size={"sm"} 
-        onClick={handleFollow}
-        >
+        <Button size={"sm"} onClick={handleFollow}>
           {following ? "Unfollow" : "Follow"}
         </Button>
       )}
